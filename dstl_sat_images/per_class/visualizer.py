@@ -1,19 +1,6 @@
 #!/usr/bin/env python
 
 # https://www.kaggle.com/amanbh/visualize-polygons-and-image-data/code
-
-"""
-Author : amanbh
-
-- Set up some basic functions to load/manipulate image data
-- Visualize/Summarize cType counts, training data, and true classes
-- Plot Polygons with holes correctly by using descartes package
-
-Based on Kernel by
-    Author : Oleg Medvedev
-    Link   : https://www.kaggle.com/torrinos/dstl-satellite-imagery-feature-detection/exploration-and-plotting/run/553107
-"""
-
 import pandas as pd
 import numpy as np
 import os

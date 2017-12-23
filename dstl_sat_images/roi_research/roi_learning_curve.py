@@ -3,10 +3,14 @@
 # ok having model problems its time to do some learning cuves and get an idea of what
 # a good model myght be,, ModelTestBed.ipynb gave me a quick idea.. but not enogh info..
 
+# SETUP
+# ln -s ../per_class/prep
+
 import numpy as np
 import pandas as pd
 import cv2
 import os
+import sys
 
 import matplotlib.pyplot as plt
 import sklearn.metrics
@@ -23,7 +27,8 @@ import glob
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 
-script_name = "./roi_learning_curve.py"
+#script_name = "./roi_learning_curve.py"
+script_name = "./" + os.path.basename(sys.argv[0])
 
 class Trainer:
     def __init__(self, file, 

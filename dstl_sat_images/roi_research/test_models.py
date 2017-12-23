@@ -5,12 +5,15 @@ from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, Callback
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 
+from keras.constraints import maxnorm
+
 import libs.metrics
 
 def models():
     return { "test_model1": setup_model_1,
         "test_model2": setup_model_2,
         "test_model3": setup_model_3,
+        "test_model3b": setup_model_3b,
         "test_model4": setup_model_4,
         "test_model5": setup_model_5 }
 
@@ -88,6 +91,42 @@ def setup_model_3(patch_size, in_chan):
     print model.summary()
 
     return model
+
+def setup_model_3b(patch_size, in_chan):
+    inputs = Input((patch_size, patch_size, in_chan))
+    drop1 = Dropout(0.1)(inputs)
+    
+    conv1 = Conv2D(32, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3))(drop1)
+    conv1 = Conv2D(32, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3))(conv1)
+    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
+
+    drop2 = Dropout(0.05)(pool1)
+    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3))(drop2)
+    conv2 = Conv2D(64, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3))(conv2)
+    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
+
+    drop3 = Dropout(0.05)(pool2)
+    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3))(drop3)
+    conv3 = Conv2D(128, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3))(conv3)
+    pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
+
+    flat = Flatten()(pool3)     
+    dense8 = Dense(64, activation='relu', kernel_constraint=maxnorm(3))(flat)
+    dense9 = Dense(16, activation='relu', kernel_constraint=maxnorm(3))(dense8)
+    output = Dense(1,activation='sigmoid')(dense9)
+
+    model = Model(inputs=inputs, outputs=output)
+    model.compile(optimizer=Adam(decay=0.0001),
+                  loss='binary_crossentropy', 
+                  metrics=['accuracy',
+                           libs.metrics.f1_score, 
+                           libs.metrics.precision, 
+                           libs.metrics.recall])
+
+    print model.summary()
+
+    return model
+
 
 
 def setup_model_4(patch_size, in_chan):
